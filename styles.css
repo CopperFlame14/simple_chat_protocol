@@ -1,0 +1,220 @@
+:root{
+  --bg:#0b0f14;
+  --panel:#0f1720;
+  --muted:#9aa7b2;
+  --accent:#5eead4;
+  --glass: rgba(255,255,255,0.03);
+  --danger: #ff7b7b;
+  --success: #7df59f;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: linear-gradient(180deg,#071018 0%, #07121a 100%);
+  color:var(--muted);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-height:100vh;
+}
+
+/* Header */
+.site-header{
+  text-align:center;
+  margin-bottom:4px;
+}
+.site-header h1{
+  color:#e6f3f2;
+  margin:0;
+  font-size:20px;
+  letter-spacing:0.4px;
+}
+.subtitle{margin:4px 0 0;font-size:13px;color:var(--muted)}
+
+/* Layout */
+.layout{
+  display:grid;
+  grid-template-columns: 300px 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+/* Controls panel */
+.controls{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+.controls h2{margin:0 0 10px;color:#e7f6f4;font-size:16px}
+.control-row{margin:10px 0;display:flex;flex-direction:column;gap:6px}
+.control-row.small{font-size:13px}
+input[type="range"]{width:100%}
+input[type="checkbox"]{transform:scale(1.05)}
+button{padding:8px 10px;border-radius:8px;border:none;background:#15202b;color:#e6f3f2;cursor:pointer}
+button:hover{filter:brightness(1.05)}
+
+/* Simulator main area */
+.simulator{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* Panels */
+.panels{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  position:relative;
+}
+.panel{
+  background: var(--panel);
+  border-radius:12px;
+  padding:10px;
+  min-height:260px;
+  width:420px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.02);
+  display:flex;
+  flex-direction:column;
+}
+.server-panel{--hue:200deg}
+.client-panel{--hue:160deg}
+.panel-title{
+  color:#cfeee2;
+  font-weight:600;
+  margin-bottom:8px;
+  font-family:var(--mono);
+  font-size:13px;
+}
+
+/* Console */
+.console{
+  background:linear-gradient(0deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));
+  flex:1;
+  border-radius:8px;
+  padding:10px;
+  overflow:auto;
+  font-family:var(--mono);
+  font-size:13px;
+  color:#dff6ef;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  position:relative;
+}
+.console .line{
+  margin:4px 0;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.console .meta{color:var(--muted);font-size:11px}
+
+/* Send form */
+.send-form{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+.send-form input[type="text"]{
+  flex:1;
+  background:var(--glass);
+  border:none;
+  padding:8px 10px;
+  border-radius:8px;
+  color:var(--muted);
+  font-family:var(--mono);
+}
+.send-form button{
+  padding:8px 12px;
+  border-radius:8px;
+  background:linear-gradient(180deg,var(--accent), #39d6b2);
+  color:#04221c;
+  font-weight:700;
+  border:none;
+}
+
+/* Overlay for animated messages */
+.overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+/* floating message look */
+.floating-msg{
+  position:absolute;
+  padding:8px 12px;
+  border-radius:999px;
+  font-family:var(--mono);
+  font-size:13px;
+  color:#021712;
+  background:linear-gradient(90deg,#a7ffeb,#5eead4);
+  box-shadow: 0 8px 24px rgba(5,10,12,0.6);
+  white-space:nowrap;
+  transform:none;
+  will-change:transform,opacity;
+}
+
+/* ack bubble style */
+.floating-ack{
+  background: linear-gradient(90deg,#dfffdc,#9ef2b4);
+  color:#032f18;
+}
+
+/* dropped style */
+.floating-dropped{
+  background:linear-gradient(90deg,#ffdada,#ffb5b5);
+  color:#3a0000;
+  text-decoration:line-through;
+}
+
+/* Event log */
+.log-area{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.log-header{font-family:var(--mono);font-size:13px;color:#e8f7ef}
+.event-log{
+  background:rgba(255,255,255,0.02);
+  border-radius:10px;
+  padding:10px;
+  max-height:180px;
+  overflow:auto;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.02);
+}
+.event-log .log-line{margin:6px 0}
+
+/* small helpers */
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
+@media (max-width:1060px){
+  .layout{grid-template-columns: 1fr; grid-auto-rows:min-content}
+  .panels{flex-direction:column}
+  .panel{width:100%}
+}
+
+/* animation using CSS variable for distance */
+@keyframes toRight {
+  from { transform: translateX(0) translateY(0); opacity:1; }
+  to { transform: translateX(var(--dx)) translateY(0); opacity:1; }
+}
+@keyframes toLeft {
+  from { transform: translateX(0) translateY(0); opacity:1; }
+  to { transform: translateX(calc(var(--dx) * -1)) translateY(0); opacity:1; }
+}
+@keyframes fadeOut {
+  from { opacity:1; transform: translateY(0); }
+  to { opacity:0; transform: translateY(-6px); }
+}
