@@ -283,4 +283,20 @@
   }
 
   // wire send form
-  sendForm.addEventListener('submit', (ev) => {
+sendForm.addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  clientSend(text);
+  input.value = '';
+});
+
+// clear log button
+clearLogBtn.addEventListener('click', () => {
+  eventLog.innerHTML = '';
+  clientConsole.innerHTML = '';
+  serverConsole.innerHTML = '';
+  activeMessages.clear();
+  logEvent('Logs cleared.');
+});
+})();
