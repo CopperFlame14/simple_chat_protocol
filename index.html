@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Chat Protocol Simulator (SCP)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Simple Chat Protocol (SCP) — Visual Simulator</h1>
+    <p class="subtitle">Client ⇄ Server • SCP/1.0 • Visualize messages, ACKs, delay & packet loss</p>
+  </header>
+
+  <main class="layout">
+    <section class="controls" aria-label="Simulation controls">
+      <h2>Simulation Controls</h2>
+      <div class="control-row">
+        <label for="delayRange">Network Delay (ms): <span id="delayVal">600</span> ms</label>
+        <input id="delayRange" type="range" min="0" max="3000" value="600" />
+      </div>
+
+      <div class="control-row">
+        <label for="lossRange">Packet Loss (%): <span id="lossVal">10</span>%</label>
+        <input id="lossRange" type="range" min="0" max="100" value="10" />
+      </div>
+
+      <div class="control-row">
+        <label for="timeoutRange">Client ACK Timeout (ms): <span id="timeoutVal">2000</span> ms</label>
+        <input id="timeoutRange" type="range" min="300" max="8000" value="2000" step="100" />
+      </div>
+
+      <div class="control-row small">
+        <label>
+          <input id="lossToggle" type="checkbox" checked /> Enable packet loss simulation
+        </label>
+      </div>
+
+      <div class="control-row small">
+        <label for="maxRetries">Max Retries:</label>
+        <select id="maxRetries" aria-label="Maximum retries">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+
+      <div class="control-row small">
+        <button id="clearLog">Clear Log</button>
+      </div>
+    </section>
+
+    <section class="simulator" aria-label="SCP simulator">
+      <div class="panels">
+        <div class="panel server-panel" id="serverPanel" aria-label="Server panel">
+          <div class="panel-title">Server</div>
+          <div class="console" id="serverConsole" aria-live="polite"></div>
+        </div>
+
+        <div class="space-between" id="spaceBetween"></div>
+
+        <div class="panel client-panel" id="clientPanel" aria-label="Client panel">
+          <div class="panel-title">Client</div>
+          <div class="console" id="clientConsole" aria-live="polite"></div>
+
+          <form id="sendForm" class="send-form" aria-label="Send message">
+            <label for="messageInput" class="visually-hidden">Message text</label>
+            <input id="messageInput" type="text" placeholder="Type a message..." required autocomplete="off" />
+            <button type="submit" id="sendBtn">Send</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- overlay used to animate messages between panels -->
+      <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+      <div class="log-area" aria-label="Event log">
+        <div class="log-header">Event Log</div>
+        <div id="eventLog" class="event-log"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <small>Built with • HTML • CSS • JavaScript — For demonstration only (static simulation)</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
