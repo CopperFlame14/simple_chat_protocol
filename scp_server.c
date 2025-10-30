@@ -8,70 +8,85 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <pthread.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-int client_socket;
-
-void *receive_messages(void *arg) {
-    char buffer[BUFFER_SIZE];
-    while (1) {
-        memset(buffer, 0, sizeof(buffer));
-        int bytes = recv(client_socket, buffer, sizeof(buffer), 0);
-        if (bytes <= 0) {
-            printf("\nConnection closed by client.\n");
-            break;
-        }
-        printf("\n[Client]: %s\n> ", buffer);
-        fflush(stdout);
-    }
-    return NULL;
-}
-
 int main() {
-    int server_socket;
+    int sock, client_socket;
     struct sockaddr_in server_addr, client_addr;
-    socklen_t addr_size;
     char buffer[BUFFER_SIZE];
+    socklen_t addr_len = sizeof(client_addr);
 
-    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    // Create socket
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Define server address
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
 
-    bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr));
-    listen(server_socket, 1);
-    printf("SCP Server waiting for connection on port %d...\n", PORT);
+    // Bind socket
+    if (bind(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Bind failed");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
 
-    addr_size = sizeof(client_addr);
-    client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_size);
+    // Listen for incoming connections
+    if (listen(sock, 3) < 0) {
+        perror("Listen failed");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("SCP Server running on port %d...\n", PORT);
+
+    // Accept a client connection
+    client_socket = accept(sock, (struct sockaddr*)&client_addr, &addr_len);
+    if (client_socket < 0) {
+        perror("Accept failed");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
     printf("Client connected!\n");
 
-    pthread_t recv_thread;
-    pthread_create(&recv_thread, NULL, receive_messages, NULL);
-
+    // Chat loop
     while (1) {
-        printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        buffer[strcspn(buffer, "\n")] = 0;
-
-        if (strcmp(buffer, "exit") == 0) {
-            send(client_socket, "SCP|BYE|Server|", strlen("SCP|BYE|Server|"), 0);
+        memset(buffer, 0, BUFFER_SIZE);
+        int bytes_received = recv(client_socket, buffer, BUFFER_SIZE, 0);
+        if (bytes_received <= 0) {
+            printf("Client disconnected.\n");
             break;
         }
 
-        char message[BUFFER_SIZE];
-        snprintf(message, sizeof(message), "SCP|MSG|Server|%s", buffer);
-        send(client_socket, message, strlen(message), 0);
+        printf("Client: %s\n", buffer);
+
+        // Prepare acknowledgment
+        char ack_msg[BUFFER_SIZE];
+        snprintf(ack_msg, sizeof(ack_msg), "SCP|ACK|Server|Message received: %s", buffer);
+
+        send(client_socket, ack_msg, strlen(ack_msg), 0);
+
+        // Optionally, allow the server to send messages too
+        printf("Enter server reply (or type 'exit'): ");
+        fgets(buffer, BUFFER_SIZE, stdin);
+        buffer[strcspn(buffer, "\n")] = 0; // remove newline
+
+        if (strcmp(buffer, "exit") == 0) {
+            printf("Closing connection...\n");
+            break;
+        }
+
+        send(client_socket, buffer, strlen(buffer), 0);
     }
 
     close(client_socket);
-    close(server_socket);
-    return 0;
-}
-
     close(sock);
     printf("Server exiting.\n");
     return 0;
